@@ -17,7 +17,8 @@ defmodule Parry.Application do
       # Start Finch
       {Finch, name: Parry.Finch},
       # Start the Endpoint (http/https)
-      ParryWeb.Endpoint
+      ParryWeb.Endpoint,
+      Parry.Clients.KickChatroomClient
       # Start a worker by calling: Parry.Worker.start_link(arg)
       # {Parry.Worker, arg}
     ]

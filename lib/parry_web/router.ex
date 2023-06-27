@@ -14,10 +14,12 @@ defmodule ParryWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", ParryWeb do
+  scope "/" do
     pipe_through :browser
 
-    get "/", PageController, :home
+    get "/", ParryWeb.PageController, :home
+    live "/rooms/", ParryWeb.RoomLive, :list
+    live "/rooms/:id", ParryWeb.RoomLive, :show
   end
 
   # Other scopes may use custom stacks.

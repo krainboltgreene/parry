@@ -5,7 +5,7 @@ defmodule Parry.MixProject do
     [
       app: :parry,
       version: "1.0.0",
-      elixir: "~> 1.15",
+      elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -53,7 +53,7 @@ defmodule Parry.MixProject do
       {:ecto_psql_extras, "~> 0.7.0"},
       {:oban, "~> 2.14"},
       {:timex, "~> 3.7"},
-      {:stash, "~> 1.0"},
+      {:websockex, "~> 0.4.3"},
       {:plug_cowboy, "~> 2.5"}
     ]
   end

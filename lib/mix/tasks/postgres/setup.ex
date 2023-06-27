@@ -9,6 +9,6 @@ defmodule Mix.Tasks.Postgres.Setup do
       {_, 0} -> "initdb"
       _ -> "/usr/lib/postgresql/13/bin/initdb"
     end
-    |> System.cmd(["--username=postgres", "--pwprompt", "tmp/postgres/data"], into: IO.stream())
+    |> System.cmd(["--username=postgres", "tmp/postgres/data"], into: IO.stream())
   end
 end

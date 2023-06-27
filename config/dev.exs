@@ -8,6 +8,7 @@ config :parry, Parry.Repo,
   database: "parry_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
+  prepare: :unnamed,
   pool_size: 10
 
 # For development, we disable any cache and enable
@@ -77,3 +78,6 @@ config :phoenix, :plug_init_mode, :runtime
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
+
+config :oban,
+  log_level: :info
