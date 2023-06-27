@@ -1,4 +1,4 @@
-defmodule Parry.Repo.Migrations.CreateRoom do
+defmodule Core.Repo.Migrations.CreateRoom do
   use Ecto.Migration
 
   def change do

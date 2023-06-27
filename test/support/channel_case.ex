@@ -1,4 +1,4 @@
-defmodule ParryWeb.ChannelCase do
+defmodule CoreWeb.ChannelCase do
   @moduledoc """
   This module defines the test case to be used by
   channel tests.
@@ -11,7 +11,7 @@ defmodule ParryWeb.ChannelCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use ParryWeb.ChannelCase, async: true`, although
+  by setting `use CoreWeb.ChannelCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -21,15 +21,15 @@ defmodule ParryWeb.ChannelCase do
     quote do
       # Import conveniences for testing with channels
       import Phoenix.ChannelTest
-      import ParryWeb.ChannelCase
+      import CoreWeb.ChannelCase
 
       # The default endpoint for testing
-      @endpoint ParryWeb.Endpoint
+      @endpoint CoreWeb.Endpoint
     end
   end
 
   setup tags do
-    Parry.DataCase.setup_sandbox(tags)
+    Core.DataCase.setup_sandbox(tags)
     :ok
   end
 end

@@ -1,4 +1,4 @@
-defmodule Parry.Repo.Migrations.CreateMessages do
+defmodule Core.Repo.Migrations.CreateMessages do
   use Ecto.Migration
 
   def change do

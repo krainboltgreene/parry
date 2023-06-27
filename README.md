@@ -1,4 +1,4 @@
-# Parry
+# Core
 
 To start your Phoenix server:
 

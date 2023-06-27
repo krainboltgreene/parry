@@ -7,18 +7,18 @@
 # General application configuration
 import Config
 
-config :parry,
-  ecto_repos: [Parry.Repo],
+config :core,
+  ecto_repos: [Core.Repo],
   generators: [binary_id: true]
 
 # Configures the endpoint
-config :parry, ParryWeb.Endpoint,
+config :core, CoreWeb.Endpoint,
   url: [host: "localhost"],
   render_errors: [
-    formats: [html: ParryWeb.ErrorHTML, json: ParryWeb.ErrorJSON],
+    formats: [html: CoreWeb.ErrorHTML, json: CoreWeb.ErrorJSON],
     layout: false
   ],
-  pubsub_server: Parry.PubSub,
+  pubsub_server: Core.PubSub,
   live_view: [signing_salt: "sbNY+VCQ"]
 
 # Configures the mailer
@@ -28,7 +28,7 @@ config :parry, ParryWeb.Endpoint,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :parry, Parry.Mailer, adapter: Swoosh.Adapters.Local
+config :core, Core.Mailer, adapter: Swoosh.Adapters.Local
 
 # Configure esbuild (the version is required)
 config :esbuild,
@@ -60,8 +60,8 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-config :parry, Oban,
-  repo: Parry.Repo,
+config :core, Oban,
+  repo: Core.Repo,
   queues: [default: 5]
 
 # Import environment specific config. This must remain at the bottom

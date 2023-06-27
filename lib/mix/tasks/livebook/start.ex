@@ -19,7 +19,7 @@ defmodule Mix.Tasks.Livebook.Start do
       ],
       env: [
         {"LIVEBOOK_DATA_PATH", "tmp/livebook-data"},
-        {"LIVEBOOK_DEFAULT_RUNTIME", "attached:parry@eberkeley:parry"},
+        {"LIVEBOOK_DEFAULT_RUNTIME", "attached:core@eberkeley:core"},
         {"LIVEBOOK_SHUTDOWN_ENABLED", "true"}
       ],
       into: IO.stream()

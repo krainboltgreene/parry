@@ -1,4 +1,4 @@
-defmodule Parry.Repo.Migrations.CreateCreators do
+defmodule Core.Repo.Migrations.CreateCreators do
   use Ecto.Migration
 
   def change do
