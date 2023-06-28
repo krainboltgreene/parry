@@ -12,16 +12,6 @@
 #   - https://pkgs.org/ - resource for finding needed packages
 #   - Ex: hexpm/elixir:1.14.1-erlang-25.0.4-debian-bullseye-20220801-slim
 #
-FROM node:16-slim as node_builder
-
-# the image comes with a node user:
-USER node
-
-WORKDIR /assets
-
-COPY --chown=node:node /assets/package.json /assets/package.json
-COPY --chown=node:node /assets/package-lock.json /assets/package-lock.json
-RUN npm ci --only=production
 
 FROM hexpm/elixir:1.14.1-erlang-25.0.4-debian-bullseye-20220801-slim as elixir_builder
 
@@ -60,10 +50,6 @@ COPY priv priv
 # step down so that `lib` is available.
 COPY assets assets
 
-COPY --from=node_builder /assets/package.json assets/package.json
-COPY --from=node_builder /assets/package-lock.json assets/package-lock.json
-COPY --from=node_builder /assets/node_modules assets/node_modules
-
 # compile assets
 RUN mix assets.deploy
 
@@ -101,7 +87,3 @@ COPY --from=elixir_builder --chown=nobody:root /app/_build/prod/rel/core ./
 USER nobody
 
 CMD ["/app/bin/server"]
-
-# Appended by flyctl
-ENV ECTO_IPV6 true
-ENV ERL_AFLAGS "-proto_dist inet6_tcp"
