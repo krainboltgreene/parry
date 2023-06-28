@@ -18,6 +18,8 @@ defmodule Core.Application do
       {Finch, name: Core.Finch},
       # Start the Endpoint (http/https)
       CoreWeb.Endpoint,
+      # Start the background job processor
+      {Oban, Application.fetch_env!(:core, Oban)},
       Core.Clients.KickChatroomClient
       # Start a worker by calling: Core.Worker.start_link(arg)
       # {Core.Worker, arg}

@@ -1,2 +1,4 @@
 erlang 25.2.2
 elixir 1.14.3
+postgres 14.2
+nodejs 16.14.2

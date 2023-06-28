@@ -6,10 +6,14 @@
 
 # General application configuration
 import Config
-
 config :core,
   ecto_repos: [Core.Repo],
   generators: [binary_id: true]
+
+config :core,
+  Core.Repo,
+  migration_primary_key: [name: :id, type: :binary_id],
+  migration_foreign_key: [column: :id, type: :binary_id]
 
 # Configures the endpoint
 config :core, CoreWeb.Endpoint,
@@ -54,8 +58,9 @@ config :tailwind,
 
 # Configures Elixir's Logger
 config :logger, :console,
-  format: "$time $metadata[$level] $message\n",
-  metadata: [:request_id]
+  format: "$time $metadata[$level] #{IO.ANSI.bright()}$message#{IO.ANSI.normal()}\n",
+  metadata: [:request_id],
+  color: :enabled
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
