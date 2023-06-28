@@ -1,25 +1,28 @@
-# Find eligible builder and runner images on Docker Hub. We use Ubuntu/Debian instead of
-# Alpine to avoid DNS resolution issues in production.
+# Find eligible builder and runner images on Docker Hub. We use Ubuntu/Debian
+# instead of Alpine to avoid DNS resolution issues in production.
 #
 # https://hub.docker.com/r/hexpm/elixir/tags?page=1&name=ubuntu
 # https://hub.docker.com/_/ubuntu?tab=tags
 #
-#
 # This file is based on these images:
 #
 #   - https://hub.docker.com/r/hexpm/elixir/tags - for the build image
-#   - https://hub.docker.com/_/debian?tab=tags&page=1&name=bullseye-20210902-slim - for the release image
+#   - https://hub.docker.com/_/debian?tab=tags&page=1&name=bullseye-20230109-slim - for the release image
 #   - https://pkgs.org/ - resource for finding needed packages
-#   - Ex: hexpm/elixir:1.14.1-erlang-25.0.4-debian-bullseye-20220801-slim
+#   - Ex: hexpm/elixir:1.14.3-erlang-25.2.2-debian-bullseye-20230109-slim
 #
+ARG ELIXIR_VERSION=1.14.3
+ARG OTP_VERSION=25.2.2
+ARG DEBIAN_VERSION=bullseye-20230109-slim
 
-FROM hexpm/elixir:1.14.1-erlang-25.0.4-debian-bullseye-20220801-slim as elixir_builder
+ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}"
+ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
+
+FROM ${BUILDER_IMAGE} as builder
 
 # install build dependencies
 RUN apt-get update -y && apt-get install -y build-essential git \
     && apt-get clean && rm -f /var/lib/apt/lists/*_*
-
-RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
 
 # prepare build dir
 WORKDIR /app
@@ -44,18 +47,14 @@ RUN mix deps.compile
 
 COPY priv priv
 
-# note: if your project uses a tool like https://purgecss.com/,
-# which customizes asset compilation based on what it finds in
-# your Elixir templates, you will need to move the asset compilation
-# step down so that `lib` is available.
+COPY lib lib
+
 COPY assets assets
 
 # compile assets
 RUN mix assets.deploy
 
 # Compile the release
-COPY lib lib
-
 RUN mix compile
 
 # Changes to config/runtime.exs don't require recompiling the code
@@ -66,7 +65,7 @@ RUN mix release
 
 # start a new build stage so that the final image will only contain
 # the compiled release and other runtime necessities
-FROM debian:bullseye-20220801-slim
+FROM ${RUNNER_IMAGE}
 
 RUN apt-get update -y && apt-get install -y libstdc++6 openssl libncurses5 locales \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
@@ -81,8 +80,11 @@ ENV LC_ALL en_US.UTF-8
 WORKDIR "/app"
 RUN chown nobody /app
 
+# set runner ENV
+ENV MIX_ENV="prod"
+
 # Only copy the final release from the build stage
-COPY --from=elixir_builder --chown=nobody:root /app/_build/prod/rel/core ./
+COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/core ./
 
 USER nobody
 

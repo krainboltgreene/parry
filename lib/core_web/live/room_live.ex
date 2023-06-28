@@ -4,11 +4,8 @@ defmodule CoreWeb.RoomLive do
   import Ecto.Query
 
   defp list_records(_assigns, _params) do
-    from(
-      Core.Chat.Room,
-      preload: [:creator]
-    )
-    |> Core.Repo.all()
+    Core.Chat.list_rooms()
+    |> Core.Repo.preload([:creator])
   end
 
   defp list_messages(record) do
@@ -23,19 +20,22 @@ defmodule CoreWeb.RoomLive do
   end
 
   defp count_records(_assigns) do
-    Core.Repo.aggregate(Core.Chat.Room, :count, :id)
+    Core.Chat.count_rooms()
+  end
+
+  defp count_messages(record) do
+    from(
+      Core.Chat.Message,
+      where: [
+        external_chatroom_id: ^record.external_chatroom_id,
+      ]
+    )
+    |> Core.Repo.aggregate(:count, :id)
   end
 
   defp get_record(id) when is_binary(id) do
-    from(
-      Core.Chat.Room,
-      where: [
-        id: ^id
-      ],
-      preload: [:creator, :messages],
-      limit: 1
-    )
-    |> Core.Repo.one()
+    Core.Chat.get_room(id)
+    |> Core.Repo.preload([:creator, :messages])
   end
 
   @impl true
@@ -77,14 +77,7 @@ defmodule CoreWeb.RoomLive do
 
   @impl true
   def handle_info(%Phoenix.Socket.Broadcast{event: "insert", payload: id}, socket) do
-    from(
-      Core.Chat.Message,
-      where: [
-        id: ^id
-      ],
-      limit: 1
-    )
-    |> Core.Repo.one()
+    Core.Chat.get_message(id)
     |> case do
       nil ->
         socket
@@ -114,7 +107,7 @@ defmodule CoreWeb.RoomLive do
   @impl true
   def render(%{live_action: :show} = assigns) do
     ~H"""
-    <h2>Room / <%= @record.creator.name %></h2>
+    <h2>Room / <%= @record.creator.name %> (<%= count_messages(@record) %>)</h2>
     <ul id="messages" phx-update="stream">
       <li :for={{dom_id, message} <- @streams.messages} id={dom_id}>
         <%= message.content %>
