@@ -69,6 +69,7 @@ defmodule Core.Clients.KickChatroomClient do
     raw
     |> Jason.decode()
     |> unnest_data()
+    |> tap(fn frame -> Logger.debug("Event #{inspect(frame)}") end)
     |> handle_json_event(state)
   end
 
@@ -85,7 +86,7 @@ defmodule Core.Clients.KickChatroomClient do
   end
 
   # {"event":"App\\Events\\SubscriptionEvent","data":{"chatroom_id":668,"username":"terrenn","months":1},"channel":"chatrooms.668.v2"}?
-  defp handle_json_event({:ok, %{"event" => "App\\Events\\ChannelSubscriptionEvent", "data" => {:ok, data}}}, state) do
+  defp handle_json_event({:ok, %{"event" => "App\\Events\\SubscriptionEvent", "data" => {:ok, data}}}, state) do
     Logger.debug("Received subscription event")
     store(Core.Chat.Subscription, data)
     {:ok, state}
