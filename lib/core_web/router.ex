@@ -18,6 +18,8 @@ defmodule CoreWeb.Router do
     pipe_through :browser
 
     get "/", CoreWeb.PageController, :home
+    get "/export_messages", CoreWeb.PageController, :export_messages
+    live "/messages/", CoreWeb.MessageLive, :list
     live "/rooms/", CoreWeb.RoomLive, :list
     live "/rooms/:id", CoreWeb.RoomLive, :show
   end

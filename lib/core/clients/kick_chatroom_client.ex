@@ -11,7 +11,7 @@ defmodule Core.Clients.KickChatroomClient do
       Keyword.merge(
         [
           name: __MODULE__,
-          debug: [:trace],
+          # debug: [:trace],
           extra_headers: [
             {"accept-language", "en-US,en;q=0.9"},
             {"cache-control", "no-cache"},
@@ -135,6 +135,7 @@ defmodule Core.Clients.KickChatroomClient do
 
   defp notify(record) do
     Logger.debug("Broadcasting insert to chatroom-#{record.external_chatroom_id} for #{record.id}")
-    CoreWeb.Endpoint.broadcast("chatroom-#{record.external_chatroom_id}", "insert", record.id)
+    CoreWeb.Endpoint.broadcast("chatroom-#{record.external_chatroom_id}", "message:insert", record.id)
+    CoreWeb.Endpoint.broadcast("messages", "message:insert", record.id)
   end
 end

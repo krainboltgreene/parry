@@ -76,7 +76,7 @@ defmodule CoreWeb.RoomLive do
   end
 
   @impl true
-  def handle_info(%Phoenix.Socket.Broadcast{event: "insert", payload: id}, socket) do
+  def handle_info(%Phoenix.Socket.Broadcast{event: "message:insert", payload: id}, socket) do
     Core.Chat.get_message(id)
     |> case do
       nil ->

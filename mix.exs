@@ -54,7 +54,8 @@ defmodule Core.MixProject do
       {:oban, "~> 2.14"},
       {:timex, "~> 3.7"},
       {:websockex, "~> 0.4.3"},
-      {:plug_cowboy, "~> 2.5"}
+      {:plug_cowboy, "~> 2.5"},
+      {:csv, "~> 3.0"}
     ]
   end
 
