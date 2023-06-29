@@ -29,7 +29,7 @@ defmodule Core.Application do
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Core.Supervisor]
     Supervisor.start_link(children, opts)
-    |> tap(fn ->
+    |> tap(fn _ ->
       Core.Chat.watch_chatrooms()
     end)
   end
