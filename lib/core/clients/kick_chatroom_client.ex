@@ -99,8 +99,12 @@ defmodule Core.Clients.KickChatroomClient do
   end
 
   # {"event":"App\\Events\\ChatMessageEvent","data":{"id":"fe3a5338-e6be-4af7-a1f5-5c94b14d8570","chatroom_id":7022952,"content":"only if you can take a lot of hate and bullshit","type":"reply","created_at":"2023-06-28T23:11:45+00:00","sender":{"id":914599,"username":"kittencataubrey","slug":"kittencataubrey","identity":{"color":"#DEB2FF","badges":[{"type":"moderator","text":"Moderator"},{"type":"subscriber","text":"Subscriber","count":1}]}},"metadata":{"original_sender":{"id":"1649044","username":"duhkee"},"original_message":{"id":"518d2ef3-620c-4048-ade6-d0167ca52123","content":"would you recommend streaming?"}}},"channel":"chatrooms.7022952.v2"}
-  defp handle_json_event({:ok, %{"event" => "App\\Events\\ChatMessageEvent", "data" => {:ok, data}}}, state) do
+  defp handle_json_event({:ok, %{"event" => "App\\Events\\ChatMessageEvent", "data" => {:ok, %{"sender" => %{"id" => id, "username" => username}} = data}}}, state) do
     Logger.debug("Received chat message event")
+    %{username: username, id: id}
+    |> Core.Job.UpdateOldUsernameJob.new()
+    |> Oban.insert()
+
     store(Core.Chat.Message, data)
     {:ok, state}
   end
@@ -113,6 +117,17 @@ defmodule Core.Clients.KickChatroomClient do
   end
 
   # {"event":"App\\Events\\UserBannedEvent","data":{"id":"eee6abd6-4cf7-4d10-8880-192dee4a7e3f","user":{"id":3042313,"username":"Re69aa","slug":"re69aa"},"banned_by":{"id":914599,"username":"kittencataubrey","slug":"kittencataubrey"},"expires_at":"2023-06-28T23:18:20+00:00"},"channel":"chatrooms.7022952.v2"}
+  defp handle_json_event({:ok, %{"event" => "App\\Events\\UserBannedEvent", "data" => {:ok, %{"user" => %{"id" => banned_id, "username" => banned_username}, "banned_by" => %{"id" => banner_id, "username" => banner_username}}}}}, state) do
+    %{username: banned_username, id: banned_id}
+    |> Core.Job.UpdateOldUsernameJob.new()
+    |> Oban.insert()
+
+    %{username: banner_username, id: banner_id}
+    |> Core.Job.UpdateOldUsernameJob.new()
+    |> Oban.insert()
+    {:ok, state}
+  end
+
   defp handle_json_event({:ok, _payload}, state), do: {:ok, state}
 
   defp store(model, data) when is_map(data) do

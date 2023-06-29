@@ -17,6 +17,7 @@ config :core,
 
 # Configures the endpoint
 config :core, CoreWeb.Endpoint,
+  adapter: Bandit.PhoenixAdapter,
   url: [host: "localhost"],
   render_errors: [
     formats: [html: CoreWeb.ErrorHTML, json: CoreWeb.ErrorJSON],

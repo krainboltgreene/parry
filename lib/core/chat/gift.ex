@@ -18,4 +18,11 @@ defmodule Core.Chat.Gift do
     |> cast(attrs, [:external_chatroom_id, :gifted_usernames, :gifter_username])
     |> validate_required([:external_chatroom_id, :gifted_usernames, :gifter_username])
   end
+
+  def changeset_from_event(record, event) do
+    record
+    |> Ecto.Changeset.cast(event, [:gifted_usernames, :gifter_username])
+    |> Ecto.Changeset.change(%{external_chatroom_id: Integer.to_string(event["chatroom_id"])})
+    |> Ecto.Changeset.validate_required([:gifted_usernames, :external_chatroom_id, :gifter_username])
+  end
 end

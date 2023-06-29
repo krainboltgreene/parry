@@ -18,15 +18,17 @@ defmodule CoreWeb.PageController do
         join: rooms in assoc(messages, :room),
         join: creators in assoc(rooms, :creator),
         select: [
-          messages.id,
-          creators.name,
           messages.written_at,
+          creators.name,
+          messages.external_username,
           messages.content,
-          messages.tags
+          messages.tags,
+          messages.id
         ],
         order_by: [desc: :written_at]
       )
       |> Core.Repo.all()
+      |> Enum.map(fn [written_at, chatroom, username, content, tags, id] -> [written_at, chatroom, username, content, Enum.join(tags, "|"), id] end)
       |> CSV.encode()
       |> Enum.to_list()
       |> to_string()
