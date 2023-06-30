@@ -30,7 +30,8 @@ defmodule Core.Application do
     opts = [strategy: :one_for_one, name: Core.Supervisor]
     Supervisor.start_link(children, opts)
     |> tap(fn _ ->
-      Core.Chat.watch_chatrooms()
+      Core.Job.WatchStreamersJob.new(%{})
+      |> Oban.insert()
     end)
   end
 

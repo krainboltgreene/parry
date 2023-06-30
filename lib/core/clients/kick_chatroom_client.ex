@@ -58,10 +58,22 @@ defmodule Core.Clients.KickChatroomClient do
     {:ok, state}
   end
 
-  def handle_disconnect(_connection_status_map, state) do
+  def handle_connect(connection, state) do
+    Logger.debug("Connecting #{inspect(connection)}")
+    Logger.info("Connecting")
+    {:ok, state}
+  end
+
+  def handle_disconnect(connection, state) do
+    Logger.debug("Disconnect #{inspect(connection)}")
+    Logger.info("Disconnect")
     state
     |> Map.put(:currently_watching, [])
     |> (&{:reconnect, &1}).()
+  end
+
+  def terminate(reason, state) do
+    Logger.info("Terminating #{inspect(reason)} #{inspect(state)}")
   end
 
   def handle_frame({:text, raw}, state) do
@@ -75,9 +87,14 @@ defmodule Core.Clients.KickChatroomClient do
 
   def handle_frame({_type, _message}, state), do: {:ok, state}
 
-  defp unnest_data({:ok, %{"data" => data} = payload}), do: {:ok, Map.put(payload, "data", Jason.decode(data))}
+  defp unnest_data({:ok, %{"data" => data} = payload}) when is_binary(data), do: {:ok, Map.put(payload, "data", Jason.decode(data))}
   defp unnest_data({:ok, payload}), do: {:ok, payload}
   defp unnest_data({:error, payload}), do: {:error, payload}
+
+  defp handle_json_event({:ok, %{"event" => "pusher:error", "data" => %{"code" => code, "message" => message}}}, state) do
+    Logger.error("[#{code}] #{message}")
+    {:ok, state}
+  end
 
   defp handle_json_event({:ok, %{"event" => "pusher_internal:subscription_succeeded", "channel" => channel}}, %{currently_watching: currently_watching} = state) do
     state

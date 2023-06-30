@@ -7,6 +7,8 @@ defmodule Core.Chat.Room do
   schema "rooms" do
     field :external_chatroom_id, :string
     belongs_to :creator, Core.Chat.Creator
+    has_many :gifts, Core.Chat.Gift, foreign_key: :external_chatroom_id, references: :external_chatroom_id
+    has_many :subscriptions, Core.Chat.Subscription, foreign_key: :external_chatroom_id, references: :external_chatroom_id
     has_many :messages, Core.Chat.Message, foreign_key: :external_chatroom_id, references: :external_chatroom_id
 
     timestamps()

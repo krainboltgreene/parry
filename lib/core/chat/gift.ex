@@ -5,9 +5,9 @@ defmodule Core.Chat.Gift do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "gifts" do
-    field :external_chatroom_id, :string
     field :gifted_usernames, {:array, :string}
     field :gifter_username, :string
+    belongs_to :room, Core.Chat.Room, foreign_key: :external_chatroom_id, references: :external_chatroom_id, type: :string
 
     timestamps()
   end
