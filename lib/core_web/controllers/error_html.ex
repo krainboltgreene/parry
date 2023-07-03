@@ -1,4 +1,5 @@
 defmodule CoreWeb.ErrorHTML do
+  @moduledoc false
   use CoreWeb, :html
 
   # If you want to customize your error pages,
