@@ -90,7 +90,7 @@ defmodule Core.Chat do
   end
 
   def gifted_subscriptions_breakdown() do
-    creator_rooms
+    creator_rooms()
     |> Enum.map(fn {name, room} ->
       {
         name,

@@ -1,6 +1,5 @@
 defmodule CoreWeb.PageController do
   use CoreWeb, :controller
-  import Ecto.Query
 
   def home(conn, _params) do
     # The home page is often custom made,
