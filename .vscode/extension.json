@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "krainboltgreene.all-builtin-commands",
+        "ms-vscode.atom-keybindings",
+        "esbenp.prettier-vscode",
+        "jamilabreu.vscode-phoenix-snippets",
+        "streetsidesoftware.code-spell-checker"
+    ]
+}

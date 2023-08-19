@@ -1,24 +1,31 @@
 // For format details, see https://aka.ms/devcontainer.json.
 {
-  "name": "Plotgenerator",
+  "name": "parry",
   "dockerComposeFile": "docker-compose.yml",
   "service": "application",
-  "workspaceFolder": "/workspace/project",
+  "workspaceFolder": "/workspace/parry",
   "userEnvProbe": "loginInteractiveShell",
-  "settings": {
-    "terminal.integrated.defaultProfile.linux": "zsh",
-    "terminal.integrated.automationShell.linux": "zsh"
-  },
 
 	// Configure tool-specific properties.
 	"customizations": {
 		// Configure properties specific to VS Code.
 		"vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.automationShell.linux": "zsh"
+      },
 			// Add the IDs of extensions you want installed when the container is created.
 			"extensions": [
+				"github.codespaces",
 				"ms-azuretools.vscode-docker",
-				"github.codespaces"
-			]
+        "benvp.vscode-hex-pm-intellisense",
+        "ecmel.vscode-html-css",
+        "esbenp.prettier-vscode",
+        "jakebecker.elixir-ls",
+        "ms-vsliveshare.vsliveshare",
+        "mtxr.sqltools-driver-pg",
+        "phoenixframework.phoenix"
+      ]
 		}
 	},
 
@@ -27,7 +34,7 @@
   "forwardPorts": [4000, 4001, 5432],
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  // "postCreateCommand": "mix deps.get"
+  "postCreateCommand": "mix deps.get",
 
   // Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
   "remoteUser": "vscode"

@@ -102,7 +102,7 @@ if [ "${PACKAGES_ALREADY_INSTALLED}" != "true" ]; then
         libkrb5-3 \
         libgssapi-krb5-2 \
         libicu[0-9][0-9] \
-        liblttng-ust0 \
+        liblttng-ust[0-9] \
         libstdc++6 \
         zlib1g \
         locales \
@@ -113,7 +113,7 @@ if [ "${PACKAGES_ALREADY_INSTALLED}" != "true" ]; then
         manpages \
         manpages-dev \
         init-system-helpers"
-
+        
     # Needed for adding manpages-posix and manpages-posix-dev which are non-free packages in Debian
     if [ "${ADD_NON_FREE_PACKAGES}" = "true" ]; then
         # Bring in variables from /etc/os-release like VERSION_CODENAME
@@ -124,7 +124,7 @@ if [ "${PACKAGES_ALREADY_INSTALLED}" != "true" ]; then
         sed -i -E "s/deb-src http:\/\/(deb|httpredir)\.debian\.org\/debian ${VERSION_CODENAME}-updates main/deb http:\/\/\1\.debian\.org\/debian ${VERSION_CODENAME}-updates main contrib non-free/" /etc/apt/sources.list
         sed -i "s/deb http:\/\/security\.debian\.org\/debian-security ${VERSION_CODENAME}\/updates main/deb http:\/\/security\.debian\.org\/debian-security ${VERSION_CODENAME}\/updates main contrib non-free/" /etc/apt/sources.list
         sed -i "s/deb-src http:\/\/security\.debian\.org\/debian-security ${VERSION_CODENAME}\/updates main/deb http:\/\/security\.debian\.org\/debian-security ${VERSION_CODENAME}\/updates main contrib non-free/" /etc/apt/sources.list
-        sed -i "s/deb http:\/\/deb\.debian\.org\/debian ${VERSION_CODENAME}-backports main/deb http:\/\/deb\.debian\.org\/debian ${VERSION_CODENAME}-backports main contrib non-free/" /etc/apt/sources.list
+        sed -i "s/deb http:\/\/deb\.debian\.org\/debian ${VERSION_CODENAME}-backports main/deb http:\/\/deb\.debian\.org\/debian ${VERSION_CODENAME}-backports main contrib non-free/" /etc/apt/sources.list 
         sed -i "s/deb-src http:\/\/deb\.debian\.org\/debian ${VERSION_CODENAME}-backports main/deb http:\/\/deb\.debian\.org\/debian ${VERSION_CODENAME}-backports main contrib non-free/" /etc/apt/sources.list
         # Handle bullseye location for security https://www.debian.org/releases/bullseye/amd64/release-notes/ch-information.en.html
         sed -i "s/deb http:\/\/security\.debian\.org\/debian-security ${VERSION_CODENAME}-security main/deb http:\/\/security\.debian\.org\/debian-security ${VERSION_CODENAME}-security main contrib non-free/" /etc/apt/sources.list
@@ -140,7 +140,7 @@ if [ "${PACKAGES_ALREADY_INSTALLED}" != "true" ]; then
     if [[ ! -z $(apt-cache --names-only search ^libssl1.1$) ]]; then
         package_list="${package_list}       libssl1.1"
     fi
-
+    
     # Install appropriate version of libssl1.0.x if available
     libssl_package=$(dpkg-query -f '${db:Status-Abbrev}\t${binary:Package}\n' -W 'libssl1\.0\.?' 2>&1 || echo '')
     if [ "$(echo "$LIlibssl_packageBSSL" | grep -o 'libssl1\.0\.[0-9]:' | uniq | sort | wc -l)" -eq 0 ]; then
@@ -155,7 +155,7 @@ if [ "${PACKAGES_ALREADY_INSTALLED}" != "true" ]; then
 
     echo "Packages to verify are installed: ${package_list}"
     apt-get -y install --no-install-recommends ${package_list} 2> >( grep -v 'debconf: delaying package configuration, since apt-utils is not installed' >&2 )
-
+        
     # Install git if not already installed (may be more recent than distro version)
     if ! type git > /dev/null 2>&1; then
         apt-get -y install --no-install-recommends git
@@ -174,7 +174,7 @@ fi
 # Ensure at least the en_US.UTF-8 UTF-8 locale is available.
 # Common need for both applications and things like the agnoster ZSH theme.
 if [ "${LOCALE_ALREADY_SET}" != "true" ] && ! grep -o -E '^\s*en_US.UTF-8\s+UTF-8' /etc/locale.gen > /dev/null; then
-    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen 
     locale-gen
     LOCALE_ALREADY_SET="true"
 fi
@@ -183,12 +183,12 @@ fi
 group_name="${USERNAME}"
 if id -u ${USERNAME} > /dev/null 2>&1; then
     # User exists, update if needed
-    if [ "${USER_GID}" != "automatic" ] && [ "$USER_GID" != "$(id -g $USERNAME)" ]; then
+    if [ "${USER_GID}" != "automatic" ] && [ "$USER_GID" != "$(id -g $USERNAME)" ]; then 
         group_name="$(id -gn $USERNAME)"
         groupmod --gid $USER_GID ${group_name}
         usermod --gid $USER_GID $USERNAME
     fi
-    if [ "${USER_UID}" != "automatic" ] && [ "$USER_UID" != "$(id -u $USERNAME)" ]; then
+    if [ "${USER_UID}" != "automatic" ] && [ "$USER_UID" != "$(id -u $USERNAME)" ]; then 
         usermod --uid $USER_UID $USERNAME
     fi
 else
@@ -198,7 +198,7 @@ else
     else
         groupadd --gid $USER_GID $USERNAME
     fi
-    if [ "${USER_UID}" = "automatic" ]; then
+    if [ "${USER_UID}" = "automatic" ]; then 
         useradd -s /bin/bash --gid $USERNAME -m $USERNAME
     else
         useradd -s /bin/bash --uid $USER_UID --gid $USERNAME -m $USERNAME
@@ -213,7 +213,7 @@ if [ "${USERNAME}" != "root" ] && [ "${EXISTING_NON_ROOT_USER}" != "${USERNAME}"
 fi
 
 # ** Shell customization section **
-if [ "${USERNAME}" = "root" ]; then
+if [ "${USERNAME}" = "root" ]; then 
     user_rc_path="/root"
 else
     user_rc_path="/home/${USERNAME}"
@@ -231,8 +231,10 @@ fi
 
 # .bashrc/.zshrc snippet
 rc_snippet="$(cat << 'EOF'
+
 if [ -z "${USER}" ]; then export USER=$(whoami); fi
 if [[ "${PATH}" != *"$HOME/.local/bin"* ]]; then export PATH="${PATH}:$HOME/.local/bin"; fi
+
 # Display optional first run image specific notice if configured and terminal is interactive
 if [ -t 1 ] && [[ "${TERM_PROGRAM}" = "vscode" || "${TERM_PROGRAM}" = "codespaces" ]] && [ ! -f "$HOME/.config/vscode-dev-containers/first-run-notice-already-displayed" ]; then
     if [ -f "/usr/local/etc/vscode-dev-containers/first-run-notice.txt" ]; then
@@ -244,26 +246,31 @@ if [ -t 1 ] && [[ "${TERM_PROGRAM}" = "vscode" || "${TERM_PROGRAM}" = "codespace
     # Mark first run notice as displayed after 10s to avoid problems with fast terminal refreshes hiding it
     ((sleep 10s; touch "$HOME/.config/vscode-dev-containers/first-run-notice-already-displayed") &)
 fi
+
 # Set the default git editor if not already set
 if [ -z "$(git config --get core.editor)" ] && [ -z "${GIT_EDITOR}" ]; then
     if  [ "${TERM_PROGRAM}" = "vscode" ]; then
-        if [[ -n $(command -v code-insiders) &&  -z $(command -v code) ]]; then
+        if [[ -n $(command -v code-insiders) &&  -z $(command -v code) ]]; then 
             export GIT_EDITOR="code-insiders --wait"
-        else
+        else 
             export GIT_EDITOR="code --wait"
         fi
     fi
 fi
+
 EOF
 )"
 
 # code shim, it fallbacks to code-insiders if code is not available
 cat << 'EOF' > /usr/local/bin/code
 #!/bin/sh
+
 get_in_path_except_current() {
     which -a "$1" | grep -A1 "$0" | grep -v "$0"
 }
+
 code="$(get_in_path_except_current code)"
+
 if [ -n "$code" ]; then
     exec "$code" "$@"
 elif [ "$(command -v code-insiders)" ]; then
@@ -290,6 +297,7 @@ chmod +x /usr/local/bin/systemctl
 # Codespaces bash and OMZ themes - partly inspired by https://github.com/ohmyzsh/ohmyzsh/blob/master/themes/robbyrussell.zsh-theme
 codespaces_bash="$(cat \
 <<'EOF'
+
 # Codespaces bash prompt theme
 __bash_prompt() {
     local userpart='`export XIT=$? \
@@ -312,6 +320,7 @@ __bash_prompt() {
     unset -f __bash_prompt
 }
 __bash_prompt
+
 EOF
 )"
 
@@ -320,7 +329,7 @@ codespaces_zsh="$(cat \
 # Codespaces zsh prompt theme
 __zsh_prompt() {
     local prompt_username
-    if [ ! -z "${GITHUB_USER}" ]; then
+    if [ ! -z "${GITHUB_USER}" ]; then 
         prompt_username="@${GITHUB_USER}"
     else
         prompt_username="%n"
@@ -336,6 +345,7 @@ ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%} "
 ZSH_THEME_GIT_PROMPT_DIRTY=" %{$fg_bold[yellow]%}✗%{$fg_bold[cyan]%})"
 ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg_bold[cyan]%})"
 __zsh_prompt
+
 EOF
 )"
 
@@ -398,6 +408,7 @@ fi
 meta_info_script="$(cat << 'EOF'
 #!/bin/sh
 . /usr/local/etc/vscode-dev-containers/meta.env
+
 # Minimal output
 if [ "$1" = "version" ] || [ "$1" = "image-version" ]; then
     echo "${VERSION}"
@@ -409,6 +420,7 @@ elif [ "$1" = "content" ] || [ "$1" = "content-url" ] || [ "$1" = "contents" ] |
     echo "${CONTENTS_URL}"
     exit 0
 fi
+
 #Full output
 echo
 echo "Development container image information"

@@ -36,7 +36,6 @@ erlang-common-test
 '
 
 DEBIAN_FRONTEND=noninteractive &&
-	apt-get install --no-install-recommends -y libncurses5 libwxgtk-webview3.0-gtk3-0v5 libglu1 libsctp1 libssh-dev xsltproc fop libodbc1 libxml2-utils libjs-jquery libjs-jquery-tablesorter &&
 	for package in $packages
 	do
 		echo "Downloading ${package}" &&

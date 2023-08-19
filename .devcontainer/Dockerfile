@@ -30,15 +30,17 @@ RUN apt-get install -y build-essential autoconf m4 software-properties-common
 RUN /bin/bash /tmp/library-scripts/common-debian.sh "${INSTALL_ZSH}" "${USERNAME}" "${USER_UID}" "${USER_GID}" "${UPGRADE_PACKAGES}" "true" "true"
 RUN /bin/bash /tmp/library-scripts/docker-debian.sh "${ENABLE_NONROOT_DOCKER}" "/var/run/docker-host.sock" "/var/run/docker.sock" "${USERNAME}" "${USE_MOBY}" "${CLI_VERSION}"
 RUN /bin/bash /tmp/library-scripts/postgresql-debian.sh
-RUN /bin/bash /tmp/library-scripts/erlang-debian.sh
-RUN /bin/bash /tmp/library-scripts/elixir-debian.sh
 
 # Clean up
 RUN apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/library-scripts/
 
 USER ${USERNAME}
 
+RUN /bin/bash /tmp/library-scripts/erlang-debian.sh
+RUN /bin/bash /tmp/library-scripts/elixir-debian.sh
+
 RUN mkdir -p /usr/local/etc/vscode-dev-containers/
+COPY elixir_ls-setup.sh ~/.config/elixir_ls/setup.sh
 COPY first-run-notice.txt /usr/local/etc/vscode-dev-containers/first-run-notice.txt
 
 SHELL [ "/bin/zsh", "-c" ]
